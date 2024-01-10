@@ -3,8 +3,9 @@ title: ""
 author: ""
 output:
   html_document:
-    output_file: "index.html"
 ---
+
+
 
 
 ```{r}
@@ -240,7 +241,9 @@ my_map <- my_map %>%
     icon = "fa-crosshairs", title = "Locate Me",
     onClick=JS("function(btn, map){ map.locate({setView: true}); }"))) %>%
   # this adds a search by address bar to the map
-  addSearchOSM()
+  addSearchOSM(options = searchOptions(hideMarkerOnCollapse = TRUE))
+  # consulted for help with getting rid of blue zoom circle when zooming back out:
+  # https://github.com/bhaskarvk/leaflet.extras/issues/209
 
 my_map <- my_map %>% addMiniMap(zoomLevelFixed = 4,
                                 toggleDisplay = TRUE,
