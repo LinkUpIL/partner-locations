@@ -256,7 +256,7 @@ my_map <- leaflet(options = leafletOptions(minZoom = 6)) %>%
   # add background map graphics
   addTiles() %>%
   # add colored layer outside of IL
-  addPolygons(data = outside_IL, opacity = 0, fillColor = "#942923", fillOpacity = 0.9) %>%
+  addPolygons(data = outside_IL, opacity = 0, fillColor = "#942923", fillOpacity = 0.75) %>%
   # add outline of Illinois
   addPolygons(data = illinois_polygon, color = "#942923", weight = 1, opacity = 1, fillOpacity = 0) %>%
   # set initial map view to show all of Illinois by setting the bounds
