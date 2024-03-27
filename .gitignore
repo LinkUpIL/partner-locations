@@ -50,3 +50,6 @@ rsconnect/
 
 # Mac specific file
 *.DS_Store
+/images
+/data/output/partners_no_popup
+/old versions and scratch code
