@@ -224,6 +224,25 @@ center_lng <- mean(IL_bbox[c(2, 4)])
 #| message: false
 #| warning: false
 
+
+# Create base of the Leaflet map
+my_map <- leaflet(options = leafletOptions(minZoom = 6)) %>%
+  # add background map graphics
+  addTiles("https://tile.jawg.io/jawg-light/{z}/{x}/{y}{r}.png?access-token=l24afZxkZQRuUAv4lcP6YHbkjTs0OFa0JWOOJNmwccbMDQ0vsUGB3td3H5Ufm17s") %>%
+  # add colored layer outside of IL
+  addPolygons(data = outside_IL, opacity = 0, fillColor = "#942923", fillOpacity = 0.75) %>%
+  # add outline of Illinois
+  addPolygons(data = illinois_polygon, color = "#942923", weight = 1, opacity = 1, fillOpacity = 0) %>%
+  # set initial map view to show all of Illinois by setting the bounds
+  fitBounds(IL_bbox[1], IL_bbox[2], IL_bbox[3], IL_bbox[4]) %>%
+  # set the maximum bounds over which the user can pan the map
+  # note: if any information is added to the popup, might need to increase the number adding to
+  # IL_bbox[4] below so that entire pop-ups for northern-most partners are fully viewable
+  # in the fully zoomed-out version of the map
+  setMaxBounds(IL_bbox[1] - 1, IL_bbox[2] - 1, IL_bbox[3] + 1, IL_bbox[4] + 5)
+# my_map is now a map of Illinois with the portion outside of IL colored in
+
+
 # Create function that adds markers to the map for each category of partner (e.g. farmers market, store, etc.)
 # this function takes as inputs the map, list of partners, and a specific partner type
 # and creates the markers and pop-ups for that type of partner
@@ -231,12 +250,15 @@ addMarkersByType <- function(map, partners, type) {
   # subset only the partners of this type
   filtered_partners <- partners %>% filter(type_styled == type)
   marker_color <- color_coding[[filtered_partners$Type[1]]]
+  
+  #current_zoom <- map.getZoom()  # not working
 
   map <- map %>%
     addCircleMarkers(
       lng = filtered_partners$X,
       lat = filtered_partners$Y,
       radius = 5,
+      #radius = current_zoom * 5/6, #unable to get this to work
       stroke = TRUE,
       color = marker_color,
       weight = 0.5,
@@ -250,23 +272,6 @@ addMarkersByType <- function(map, partners, type) {
   return(map)
 }
 
-
-# Create base of the Leaflet map
-my_map <- leaflet(options = leafletOptions(minZoom = 6)) %>%
-  # add background map graphics
-  addTiles() %>%
-  # add colored layer outside of IL
-  addPolygons(data = outside_IL, opacity = 0, fillColor = "#942923", fillOpacity = 0.75) %>%
-  # add outline of Illinois
-  addPolygons(data = illinois_polygon, color = "#942923", weight = 1, opacity = 1, fillOpacity = 0) %>%
-  # set initial map view to show all of Illinois by setting the bounds
-  fitBounds(IL_bbox[1], IL_bbox[2], IL_bbox[3], IL_bbox[4]) %>%
-  # set the maximum bounds over which the user can pan the map
-  # note: if any information is added to the popup, might need to increase the number adding to
-  # IL_bbox[4] below so that entire pop-ups for northern-most partners are fully viewable
-  # in the fully zoomed-out version of the map
-  setMaxBounds(IL_bbox[1] - 1, IL_bbox[2] - 1, IL_bbox[3] + 1, IL_bbox[4] + 5)
-# my_map is now a map of Illinois with the portion outside of IL colored in
 
 # Generate a list of the unique partner types
 partner_types <- unique(partners$type_styled)
